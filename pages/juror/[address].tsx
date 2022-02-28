@@ -4,11 +4,8 @@ import { ethers } from 'ethers'
 import { request, gql } from 'graphql-request'
 import Link from 'next/link';
 
-// TODO: Remove Example data
-// http://localhost:3000/juror/0xbe18daabff5a5cf8e38e42864cfbaadf06dbb35d
-// http://localhost:3000/juror/0xfd4ba0a1c08e0af938a2b1ac06e8937c8535ec93
-
-const endpoint = process.env.THE_GRAPH_ENDPOINT as string;
+// TODO: Move to query folder
+import { GRAPH_ENDPOINT } from '../../queries'
 
 const getAllJurorIdsQuery = gql`
   query getAllJurorIds ($skipJurors: Int!) {
@@ -49,7 +46,7 @@ export async function getStaticPaths() {
   let jurorAddresses: { params: { address: string } }[] = []
   while (true) {
     const variables = { skipJurors: skipJurors }
-    const res = await request(endpoint, getAllJurorIdsQuery, variables)
+    const res = await request(GRAPH_ENDPOINT, getAllJurorIdsQuery, variables)
 
     // Check if the data object is empty
     if (Object.entries(res.jurors).length === 0) {
@@ -65,7 +62,7 @@ export async function getStaticPaths() {
   }
 
   // Add newline for correct printing with `yarn build`
-  console.info(`\nFound ${jurorAddresses.length} juror addresses`)
+  // console.info(`\nFound ${jurorAddresses.length} juror addresses`)
   return {
     paths: jurorAddresses,
     fallback: true,  // Render the page if it has not been rendered before
@@ -77,7 +74,7 @@ export async function getStaticProps(context: { params: { address: string } }) {
   const address = context.params.address;
   if (ethers.utils.isAddress(address)) {
     const variables = { id: address }
-    const res = await request(endpoint, individualJurorQuery, variables)
+    const res = await request(GRAPH_ENDPOINT, individualJurorQuery, variables)
 
     return {
       props: { address: address, otherData: res },

@@ -19,7 +19,6 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(context: { params: { number: string } }) {
-  // Validate address is a valid ethereum address
   return {
     props: {
       number: context.params.number,
