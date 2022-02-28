@@ -1,16 +1,5 @@
-import { COINGECKO_ENDPOINT, PNK_DECIMALS } from "."
+import { COINGECKO_ENDPOINT } from "."
 import axios from "axios"
-
-export const pnkFormat = (numTokens: number, decimals: number = 0): string => {
-  const locale = "en-US"
-  const options = {
-    maximumFractionDigits: decimals
-  }
-
-  // Convert integer number of PNK to decimal version
-  const decimalPNK = numTokens * (10 ** PNK_DECIMALS)
-  return decimalPNK.toLocaleString(locale, options)
-}
 
 export const pnkQuery = async () => {
   return axios.get(COINGECKO_ENDPOINT + 'coins/kleros', {
