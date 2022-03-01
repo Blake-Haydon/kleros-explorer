@@ -1,6 +1,8 @@
-import { GRAPH_ENDPOINT } from '.'
+import { GRAPH_ENDPOINT, ALCHEMY_ENDPOINT } from '.'
 import { request, gql } from 'graphql-request'
+import { ethers } from 'ethers'
 
+const provider = new ethers.providers.JsonRpcProvider(ALCHEMY_ENDPOINT);
 const query = gql`
   query IndexQuery ($numJurors: Int!, $numDisputes: Int!) {
     jurors (orderBy: totalStaked, orderDirection: desc, first: $numJurors) {
@@ -9,7 +11,10 @@ const query = gql`
     }
 
     disputes(orderBy: disputeID, orderDirection: desc, first: $numDisputes) {
-      id
+      disputeID
+      subcourtID {
+        subcourtID
+      }  
     }
 
     klerosCounters {
@@ -26,27 +31,38 @@ export interface IIndexQuery {
     totalStaked: number;
   }[];
   disputes: {
-    id: string;
+    disputeID: string;
+    subcourtID: string;
   }[];
   disputesCount: number;
   activeJurors: number;
   tokenStaked: number;
 }
 
-export const indexQuery = async (numJurors: number, numDisputes: number): Promise<IIndexQuery> => {
+export const indexQuery = async (numJurors: number, numDisputes: number): Promise<any> => {
   const variables = { numJurors, numDisputes }
   return request(GRAPH_ENDPOINT, query, variables)
     .then(res => {
       return {
         ...res,
-        // @ts-ignore TODO: FIX THOSE TYPES
+        // @ts-ignore TODO: FIX TYPE
         jurors: res.jurors.map(juror => ({
           ...juror,
           totalStaked: parseInt(juror.totalStaked),
+        })),
+        // @ts-ignore TODO: FIX TYPE
+        disputes: res.disputes.map(dispute => ({
+          ...dispute,
+          subcourtID: dispute.subcourtID.subcourtID,
         })),
         disputesCount: parseInt(res.klerosCounters[0].disputesCount),
         activeJurors: parseInt(res.klerosCounters[0].activeJurors),
         tokenStaked: parseInt(res.klerosCounters[0].tokenStaked),
       }
     })
+
+  // TODO: MAKE BETTER ENS LOOKUP
+  // Check address for ENS name
+  // @ts-ignore TODO: FIX TYPE
+  // return Promise.all(res.jurors.map(juror => provider.lookupAddress(juror.id)))
 }

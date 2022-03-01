@@ -1,7 +1,12 @@
 import { COINGECKO_ENDPOINT } from "."
 import axios from "axios"
 
-export const pnkQuery = async () => {
+export interface IPnkQuery {
+  circulatingSupply: number;
+  priceUSD: number;
+}
+
+export const pnkQuery = async (): Promise<IPnkQuery> => {
   return axios.get(COINGECKO_ENDPOINT + 'coins/kleros', {
     params: {
       market_data: true,

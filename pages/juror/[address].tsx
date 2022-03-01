@@ -1,34 +1,7 @@
 import type { NextPage } from 'next'
-
-import { ethers } from 'ethers'
-import { request, gql } from 'graphql-request'
 import Link from 'next/link';
 
-// TODO: Move to query folder
-import { GRAPH_ENDPOINT } from '../../queries'
-
-const getAllJurorIdsQuery = gql`
-  query getAllJurorIds ($skipJurors: Int!) {
-    jurors (skip: $skipJurors, first: 1000, orderBy: id, orderDirection: asc) {
-      id
-    }
-  }
-`;
-
-const individualJurorQuery = gql`
-  query getIndividualJuror ($id: ID!) {
-    jurors (where: {id: $id}) {
-      id
-      totalStaked
-      currentStakes {
-        stake
-        court {
-          id
-        }
-      }
-    }
-  }
-`;
+import { getAllJurorAddresses, getIndividualJurorInfo } from '../../queries/jurorQuery'
 
 export async function getStaticPaths() {
   // Do not run slow query while in dev mode
@@ -39,53 +12,38 @@ export async function getStaticPaths() {
     }
   }
 
-  // Get all juror addresses from the graph endpoint
-  let skipJurors = 0
-
-  // TODO: FIX THIS TYPE
-  let jurorAddresses: { params: { address: string } }[] = []
-  while (true) {
-    const variables = { skipJurors: skipJurors }
-    const res = await request(GRAPH_ENDPOINT, getAllJurorIdsQuery, variables)
-
-    // Check if the data object is empty
-    if (Object.entries(res.jurors).length === 0) {
-      break
-    } else {
-      jurorAddresses = jurorAddresses.concat(
-        res.jurors.map(
-          (juror: { id: any }) => ({ params: { address: juror.id } })
-        )
-      )
-      skipJurors += res.jurors.length
-    }
-  }
+  // In production, find all juror addresses to generate static paths
+  const jurorAddresses = await getAllJurorAddresses()
 
   // Add newline for correct printing with `yarn build`
-  // console.info(`\nFound ${jurorAddresses.length} juror addresses`)
+  console.info(`\nFound ${jurorAddresses.length} juror addresses`)
+
   return {
-    paths: jurorAddresses,
+    paths: jurorAddresses.map(jurorAddress => ({
+      params: { address: jurorAddress }
+    })),
     fallback: true,  // Render the page if it has not been rendered before
   };
 }
 
 export async function getStaticProps(context: { params: { address: string } }) {
-  // Validate address is a valid ethereum address
-  const address = context.params.address;
-  if (ethers.utils.isAddress(address)) {
-    const variables = { id: address }
-    const res = await request(GRAPH_ENDPOINT, individualJurorQuery, variables)
-
-    return {
-      props: { address: address, otherData: res },
-      revalidate: 60 * 60, // An hour in seconds
-    }
-  } else {
-    return { notFound: true }
-  }
+  const address = context.params.address
+  // TODO: add ENS support
+  // const name = await provider.lookupAddress(address);
+  return getIndividualJurorInfo(address)
+    .then(res => {
+      return {
+        props: { address: address, otherData: res },
+        revalidate: 60 * 60, // An hour in seconds
+      }
+    })
+    .catch(_ => {
+      return { notFound: true }
+    })
 }
 
 const JurorPage: NextPage<{ address: string, otherData: any }> = ({ address, otherData }) => {
+
   return (
     <div>
       <main className="container">

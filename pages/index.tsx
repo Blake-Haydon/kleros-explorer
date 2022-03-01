@@ -3,13 +3,13 @@ import Link from 'next/link'
 import Head from 'next/head'
 
 import { indexQuery, IIndexQuery } from '../queries/indexQuery';
-import { pnkQuery } from '../queries/pnkQuery';
+import { pnkQuery, IPnkQuery } from '../queries/pnkQuery';
 import { PNK_DECIMALS } from '../queries';
 
 export async function getStaticProps() {
   return {
     props: {
-      theGraph: await indexQuery(5, 5),
+      theGraph: await indexQuery(10, 10),
       coinGecko: await pnkQuery(),
     },
     revalidate: 24 * 60 * 60, // 1 day in seconds
@@ -18,12 +18,12 @@ export async function getStaticProps() {
 
 const Home: NextPage<{
   theGraph: IIndexQuery,
-  coinGecko: any,
+  coinGecko: IPnkQuery
 }> = ({ theGraph, coinGecko }) => {
-  // FIXME: clean up this code
-  const stakedPNK = theGraph.tokenStaked * (10 ** -PNK_DECIMALS)
-  const percentStaked = (stakedPNK / coinGecko.circulatingSupply) * 100
-  const stakedSecurityUSD = stakedPNK * coinGecko.priceUSD
+  const stakedPNK = theGraph.tokenStaked * (10 ** -PNK_DECIMALS);
+  const percentStaked = (stakedPNK / coinGecko.circulatingSupply) * 100;
+  const stakedSecurityUSD = stakedPNK * coinGecko.priceUSD;
+
   return (
     <div>
       <Head>
@@ -114,7 +114,7 @@ const Home: NextPage<{
                   return (
                     <tr key={juror.id}>
                       <th scope="col">{index + 1}</th>
-                      <th scope="col"><Link href={`juror/${juror.id}`}>{juror.id}</Link></th>
+                      <th scope="col"><Link href={`juror/${juror.id}`}>{juror.id.slice(0, 12) + "..."}</Link></th>
                       <th scope="col" style={{ textAlign: "right" }}>{jurorStakedPNK.toLocaleString('en-US', { maximumFractionDigits: 0 })} PNK</th>
                     </tr>
                   )
@@ -129,18 +129,15 @@ const Home: NextPage<{
             <table className="table table-striped table-hover">
               <thead>
                 <tr>
-                  <th scope="col">#</th>
-                  <th scope="col" style={{ textAlign: "right" }}>Case Number</th>
+                  <th scope="col">Case Number</th>
                 </tr>
               </thead>
               <tbody>
-                {theGraph.disputes.map((disputes, index) => {
+                {theGraph.disputes.map(disputes => {
                   return (
-                    <tr key={disputes.id}>
-                      <th scope="col">{index + 1}</th>
-                      <th scope="col" style={{ textAlign: "right" }}>
-                        <Link href={`dispute/${disputes.id}`}>{disputes.id}</Link>
-                      </th>
+                    <tr key={disputes.disputeID}>
+                      <th scope="col"><Link href={`dispute/${disputes.disputeID}`}>{disputes.disputeID}</Link></th>
+                      <th scope="col"><Link href={`court/${disputes.subcourtID}`}>{"Court " + disputes.subcourtID}</Link></th>
                     </tr>
                   )
                 })}
