@@ -61,8 +61,7 @@ export const indexQuery = async (numJurors: number, numDisputes: number): Promis
       }
     })
 
-  // TODO: MAKE BETTER ENS LOOKUP
-  // Check address for ENS name
+  // TODO: ENABLE ENS LOOKUP
   // @ts-ignore TODO: FIX TYPE
   // return Promise.all(res.jurors.map(juror => provider.lookupAddress(juror.id)))
 }

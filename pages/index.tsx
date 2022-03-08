@@ -130,6 +130,8 @@ const Home: NextPage<{
               <thead>
                 <tr>
                   <th scope="col">Case Number</th>
+                  {/* TODO: Use court name instead of court ID */}
+                  <th scope="col" style={{ textAlign: "right" }}>Court ID</th>
                 </tr>
               </thead>
               <tbody>
@@ -137,7 +139,7 @@ const Home: NextPage<{
                   return (
                     <tr key={disputes.disputeID}>
                       <th scope="col"><Link href={`dispute/${disputes.disputeID}`}>{disputes.disputeID}</Link></th>
-                      <th scope="col"><Link href={`court/${disputes.subcourtID}`}>{"Court " + disputes.subcourtID}</Link></th>
+                      <th scope="col" style={{ textAlign: "right" }}><Link href={`court/${disputes.subcourtID}`}>{"Court " + disputes.subcourtID}</Link></th>
                     </tr>
                   )
                 })}

@@ -5,24 +5,15 @@ import { getAllJurorAddresses, getIndividualJurorInfo } from '../../queries/juro
 
 export async function getStaticPaths() {
   // Do not run slow query while in dev mode
-  if (process.env.NODE_ENV === 'development') {
-    return {
-      paths: [],
-      fallback: true,
-    }
-  }
+  if (process.env.NODE_ENV === 'development') { return { paths: [], fallback: 'blocking' } }
 
   // In production, find all juror addresses to generate static paths
   const jurorAddresses = await getAllJurorAddresses()
-
-  // Add newline for correct printing with `yarn build`
-  console.info(`\nFound ${jurorAddresses.length} juror addresses`)
-
   return {
     paths: jurorAddresses.map(jurorAddress => ({
       params: { address: jurorAddress }
     })),
-    fallback: true,  // Render the page if it has not been rendered before
+    fallback: 'blocking',  // Render the page in full if it has not been rendered before
   };
 }
 
