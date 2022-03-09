@@ -3,6 +3,9 @@ import Link from 'next/link';
 
 import { getAllJurorAddresses, getIndividualJurorInfo } from '../../queries/jurorQuery'
 
+import Header from '../../components/header';
+
+
 export async function getStaticPaths() {
   // Do not run slow query while in dev mode
   if (process.env.NODE_ENV === 'development') { return { paths: [], fallback: 'blocking' } }
@@ -37,6 +40,9 @@ const JurorPage: NextPage<{ address: string, otherData: any }> = ({ address, oth
 
   return (
     <div>
+      <Header />
+
+
       <main className="container">
         <div className="row my-5">
           <div className="col">

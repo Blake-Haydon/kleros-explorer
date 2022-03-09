@@ -1,10 +1,12 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
-import Head from 'next/head'
 
+import { PNK_DECIMALS } from '../queries';
 import { indexQuery, IIndexQuery } from '../queries/indexQuery';
 import { pnkQuery, IPnkQuery } from '../queries/pnkQuery';
-import { PNK_DECIMALS } from '../queries';
+
+import Header from '../components/header';
+
 
 export async function getStaticProps() {
   return {
@@ -26,11 +28,7 @@ const Home: NextPage<{
 
   return (
     <div>
-      <Head>
-        <title>Kleros Court Explorer</title>
-        <meta name="description" content="Kleros Court Explorer" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Header />
 
       <main className="container">
         <div className="row my-5">
@@ -149,7 +147,7 @@ const Home: NextPage<{
 
         </div>
       </main>
-    </div>
+    </div >
   )
 }
 
