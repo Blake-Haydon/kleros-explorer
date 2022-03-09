@@ -1,9 +1,9 @@
 import type { NextPage } from 'next'
-import Link from 'next/link';
 
 import { getAllJurorAddresses, getIndividualJurorInfo } from '../../queries/jurorQuery'
 
 import Header from '../../components/header';
+import Heading from '../../components/heading';
 
 
 export async function getStaticPaths() {
@@ -41,16 +41,8 @@ const JurorPage: NextPage<{ address: string, otherData: any }> = ({ address, oth
   return (
     <div>
       <Header />
-
-
       <main className="container">
-        <div className="row my-5">
-          <div className="col">
-            <Link href="/" passHref>
-              <h1 className="home-heading">Kleros Explorer</h1>
-            </Link>
-          </div>
-        </div>
+        <Heading />
 
         <p>Juror: {address}</p>
         <p>{JSON.stringify(otherData)}</p>

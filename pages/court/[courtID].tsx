@@ -1,10 +1,10 @@
 import request, { gql } from "graphql-request";
 import { NextPage } from "next"
-import Link from "next/link"
 
 import { GRAPH_ENDPOINT, IPFS_ENDPOINT } from "../../queries"
 
 import Header from '../../components/header';
+import Heading from "../../components/heading";
 
 
 interface ICourtInfo {
@@ -65,15 +65,8 @@ const CourtPage: NextPage<{ courtID: string, courtInfo: ICourtInfo }> = ({ court
   return (
     <div>
       <Header />
-
       <main className="container">
-        <div className="row my-5">
-          <div className="col">
-            <Link href="/" passHref>
-              <h1 className="home-heading">Kleros Explorer</h1>
-            </Link>
-          </div>
-        </div>
+        <Heading />
 
         <h2>{courtInfo.name}</h2>
         {/* TODO: find way of filtering this */}

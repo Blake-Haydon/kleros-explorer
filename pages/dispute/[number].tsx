@@ -1,7 +1,7 @@
 import { NextPage } from "next"
-import Link from "next/link"
 
 import Header from '../../components/header';
+import Heading from "../../components/heading";
 
 
 export async function getStaticPaths() {
@@ -31,13 +31,7 @@ const DisputePage: NextPage<{ number: string }> = ({ number }) => {
       <Header />
 
       <main className="container">
-        <div className="row my-5">
-          <div className="col">
-            <Link href="/" passHref>
-              <h1 className="home-heading">Kleros Explorer</h1>
-            </Link>
-          </div>
-        </div>
+        <Heading />
 
         <p>DISPUTE: {number}</p>
 
