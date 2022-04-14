@@ -2,6 +2,7 @@ import { GRAPH_ENDPOINT } from '.'
 import { request, gql } from 'graphql-request'
 import { ethers } from 'ethers'
 
+
 interface IJuror {
   id: string;
 }
@@ -17,7 +18,6 @@ const getAllJurorAddressesQuery = gql`
 const individualJurorQuery = gql`
   query getIndividualJuror ($address: ID!) {
     jurors (where: {id: $address}) {
-      id
       totalStaked
       currentStakes {
         stake
@@ -31,7 +31,6 @@ const individualJurorQuery = gql`
 
 /** Get all Kleros Juror addresses from The Graph */
 export const getAllJurorAddresses = async (): Promise<string[]> => {
-  // TODO: FIX THIS TYPE
   let jurorAddresses: string[] = []
   let skipJurors = 0
 

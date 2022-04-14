@@ -1,39 +1,26 @@
 import type { NextPage } from 'next'
 
-import { getAllJurorAddresses, getIndividualJurorInfo } from '../../queries/jurorQuery'
+import { getIndividualJurorInfo } from '../../queries/jurorQuery'
 
 import Header from '../../components/header';
 import Heading from '../../components/heading';
 
 
-export async function getStaticPaths() {
-  // Do not run slow query while in dev mode
-  if (process.env.NODE_ENV === 'development') { return { paths: [], fallback: 'blocking' } }
-
-  // In production, find all juror addresses to generate static paths
-  const jurorAddresses = await getAllJurorAddresses()
-  return {
-    paths: jurorAddresses.map(jurorAddress => ({
-      params: { address: jurorAddress }
-    })),
-    fallback: 'blocking',  // Render the page in full if it has not been rendered before
-  };
-}
-
-export async function getStaticProps(context: { params: { address: string } }) {
+export async function getServerSideProps(context: { params: { address: string } }) {
   const address = context.params.address
   // TODO: add ENS support
   // const name = await provider.lookupAddress(address);
-  return getIndividualJurorInfo(address)
-    .then(res => {
-      return {
-        props: { address: address, otherData: res },
-        revalidate: 60 * 60, // An hour in seconds
-      }
-    })
-    .catch(_ => {
-      return { notFound: true }
-    })
+
+  try {
+    const res = await getIndividualJurorInfo(address);
+    const props = {
+      address: address,
+      otherData: res,
+    }
+    return { props }
+  } catch (error) {
+    return { notFound: true }
+  }
 }
 
 const JurorPage: NextPage<{ address: string, otherData: any }> = ({ address, otherData }) => {

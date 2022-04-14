@@ -1,8 +1,7 @@
-import { GRAPH_ENDPOINT, ALCHEMY_ENDPOINT } from '.'
+import { GRAPH_ENDPOINT } from '.'
 import { request, gql } from 'graphql-request'
-import { ethers } from 'ethers'
 
-const provider = new ethers.providers.JsonRpcProvider(ALCHEMY_ENDPOINT);
+
 const query = gql`
   query IndexQuery ($numJurors: Int!, $numDisputes: Int!) {
     jurors (orderBy: totalStaked, orderDirection: desc, first: $numJurors) {
@@ -60,8 +59,4 @@ export const indexQuery = async (numJurors: number, numDisputes: number): Promis
         tokenStaked: parseInt(res.klerosCounters[0].tokenStaked),
       }
     })
-
-  // TODO: ENABLE ENS LOOKUP
-  // @ts-ignore TODO: FIX TYPE
-  // return Promise.all(res.jurors.map(juror => provider.lookupAddress(juror.id)))
 }

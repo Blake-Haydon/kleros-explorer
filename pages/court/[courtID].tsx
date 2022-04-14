@@ -30,21 +30,7 @@ const getIndividualCourtQuery = gql`
   }
 `;
 
-export async function getStaticPaths() {
-  // Do not run slow query while in dev mode
-  if (process.env.NODE_ENV === 'development') { return { paths: [], fallback: 'blocking' } }
-
-  const res = await request(GRAPH_ENDPOINT, getAllCourtsQuery)
-  const policyUpdates: { subcourtID: string }[] = res.policyUpdates;
-  return {
-    paths: policyUpdates.map(court => ({
-      params: { courtID: court.subcourtID }
-    })),
-    fallback: 'blocking', // Render the page in full if it has not been rendered before
-  }
-}
-
-export async function getStaticProps(context: { params: { courtID: string } }) {
+export async function getServerSideProps(context: { params: { courtID: string } }) {
   const variables = { courtID: context.params.courtID }
   const resGraph = await request(GRAPH_ENDPOINT, getIndividualCourtQuery, variables)
 

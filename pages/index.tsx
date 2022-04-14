@@ -6,6 +6,7 @@ import { indexQuery, IIndexQuery } from '../queries/indexQuery';
 import { pnkQuery, IPnkQuery } from '../queries/pnkQuery';
 
 import Header from '../components/header';
+import Heading from '../components/heading';
 
 
 export async function getStaticProps() {
@@ -14,7 +15,7 @@ export async function getStaticProps() {
       theGraph: await indexQuery(10, 10),
       coinGecko: await pnkQuery(),
     },
-    revalidate: 24 * 60 * 60, // 1 day in seconds
+    revalidate: 60 * 60, // 1 hour in seconds
   }
 }
 
@@ -29,8 +30,9 @@ const Home: NextPage<{
   return (
     <div>
       <Header />
-
       <main className="container">
+        <Heading />
+
         <div className="row my-5">
           <div className="col">
             <Link href="/" passHref>
@@ -147,7 +149,7 @@ const Home: NextPage<{
 
         </div>
       </main>
-    </div >
+    </div>
   )
 }
 

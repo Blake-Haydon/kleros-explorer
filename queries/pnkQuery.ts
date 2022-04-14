@@ -16,11 +16,11 @@ export const pnkQuery = async (): Promise<IPnkQuery> => {
       developer_data: false,
       sparkline: false,
     }
-  }).then(res => {
-    return {
+  }).then(res => (
+    {
       circulatingSupply: parseFloat(res.data.market_data.circulating_supply),
       priceUSD: parseFloat(res.data.market_data.current_price.usd),
     }
-  })
+  ))
 }
 
