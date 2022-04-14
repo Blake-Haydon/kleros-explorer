@@ -1,10 +1,14 @@
+/* LIBRARY IMPORTS */
 import type { NextPage } from 'next'
 import Link from 'next/link'
 
+/* QUERIES */
 import { PNK_DECIMALS } from '../queries';
 import { indexQuery, IIndexQuery } from '../queries/indexQuery';
 import { pnkQuery, IPnkQuery } from '../queries/pnkQuery';
+import { id2courtName } from '../queries/courtQuery';
 
+/* COMPONENTS */
 import Header from '../components/header';
 import Heading from '../components/heading';
 
@@ -133,8 +137,7 @@ const Home: NextPage<{
               <thead>
                 <tr>
                   <th scope="col">Case Number</th>
-                  {/* TODO: Use court name instead of court ID */}
-                  <th scope="col" style={{ textAlign: "right" }}>Court ID</th>
+                  <th scope="col" style={{ textAlign: "right" }}>Court</th>
                 </tr>
               </thead>
               <tbody>
@@ -142,7 +145,7 @@ const Home: NextPage<{
                   return (
                     <tr key={disputes.disputeID}>
                       <th scope="col"><Link href={`dispute/${disputes.disputeID}`}>{disputes.disputeID}</Link></th>
-                      <th scope="col" style={{ textAlign: "right" }}><Link href={`court/${disputes.subcourtID}`}>{"Court " + disputes.subcourtID}</Link></th>
+                      <th scope="col" style={{ textAlign: "right" }}><Link href={`court/${disputes.subcourtID}`}>{id2courtName(disputes.subcourtID)}</Link></th>
                     </tr>
                   )
                 })}

@@ -13,14 +13,6 @@ interface ICourtInfo {
   url: string;
 }
 
-const getAllCourtsQuery = gql`
-  query getAllCourtsQuery {
-    policyUpdates {
-      subcourtID
-    }
-  }
-`;
-
 const getIndividualCourtQuery = gql`
   query getIndividualCourtQuery ($courtID: ID!) {
     policyUpdates (where: {id: $courtID}) {
@@ -38,25 +30,21 @@ export async function getServerSideProps(context: { params: { courtID: string } 
   if (resGraph.policyUpdates.length === 0) { return { notFound: true } }
 
   const resIPFS = await fetch(`${IPFS_ENDPOINT}${resGraph.policyUpdates[0].policy}`)
-  const courtInfo: ICourtInfo = await resIPFS.json();
-  return {
-    props: {
-      courtID: context.params.courtID,
-      courtInfo: courtInfo,
-    }
-  }
+  const props: ICourtInfo = await resIPFS.json();
+  return { props }
 }
 
-const CourtPage: NextPage<{ courtID: string, courtInfo: ICourtInfo }> = ({ courtID, courtInfo }) => {
+const CourtPage: NextPage<ICourtInfo> = ({ name, description, url }) => {
   return (
     <div>
       <Header />
       <main className="container">
         <Heading />
 
-        <h2>{courtInfo.name}</h2>
+        <h2>{name}</h2>
         {/* TODO: find way of filtering this */}
-        <p>{courtInfo.description}</p>
+        <p>{description}</p>
+        <p>{url}</p>
 
       </main>
     </div>
