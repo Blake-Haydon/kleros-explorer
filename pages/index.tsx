@@ -33,13 +33,16 @@ const Home: NextPage<{
       <main className="container">
         <Heading />
 
-        <div className="row my-5">
-          <div className="col">
-            <Link href="/" passHref>
-              <h1 className="home-heading">Kleros Explorer</h1>
-            </Link>
+        {/* Search bar */}
+        {/* <div className="row my-5">
+          <div className="col-md p-3">
+            <div className="input-group input-group-lg">
+              <input type="text" className="form-control" placeholder="Juror Address / Case / Court" aria-label="Juror Address / Case / Court" aria-describedby="button-addon2" />
+              <button className="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+            </div>
           </div>
-        </div>
+        </div> */}
+
 
         <div className="row">
           <div className="col-md p-3">
